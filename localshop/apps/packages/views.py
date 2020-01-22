@@ -183,7 +183,9 @@ def handle_register_or_upload(post_data, files, user, repository):
         for search_name in get_search_names(name):
             condition |= Q(name__iexact=search_name)
 
-        package = repository.packages.get(condition)
+        package = repository.packages.filter(condition).first()
+        if not package:
+            raise ObjectDoesNotExist()
 
         # Error out when we try to override a mirror'ed package for now
         # not sure what the best thing is
